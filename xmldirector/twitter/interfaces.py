@@ -19,11 +19,11 @@ class ITwitterSettings(Interface):
     """ Twitter settings """
 
     twitter_app_key = schema.TextLine(
-        title=_(u'Twitter application key'),
+        title=_(u'Twitter consumer key'),
         required=True
     )
 
     twitter_app_secret = schema.TextLine(
-        title=_(u'Twitter application secret'),
+        title=_(u'Twitter consumer secret'),
         required=True
     )
