@@ -8,22 +8,22 @@
 
 from plone.app.registry.browser import controlpanel
 
-from xmldirector.twitter.interfaces import IDropboxSettings
+from xmldirector.twitter.interfaces import ITwitterSettings
 from xmldirector.twitter.i18n import MessageFactory as _
 
 
-class DropboxSettingsEditForm(controlpanel.RegistryEditForm):
+class TwitterSettingsEditForm(controlpanel.RegistryEditForm):
 
-    schema = IDropboxSettings
-    label = _(u'Dropbox Policy settings')
+    schema = ITwitterSettings
+    label = _(u'Twitter Policy settings')
     description = _(u'')
 
     def updateFields(self):
-        super(DropboxSettingsEditForm, self).updateFields()
+        super(TwitterSettingsEditForm, self).updateFields()
 
     def updateWidgets(self):
-        super(DropboxSettingsEditForm, self).updateWidgets()
+        super(TwitterSettingsEditForm, self).updateWidgets()
 
 
-class DropboxSettingsControlPanel(controlpanel.ControlPanelFormWrapper):
-    form = DropboxSettingsEditForm
+class TwitterSettingsControlPanel(controlpanel.ControlPanelFormWrapper):
+    form = TwitterSettingsEditForm

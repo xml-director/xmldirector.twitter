@@ -6,7 +6,7 @@
     purge="False">
 
     <configlet
-        title="XML-Director Dropbox Settings"
+        title="XML-Director Twitter Settings"
         action_id="xmldirector.twitter"
         appId="xmldirector.twitter"
         category="Products"

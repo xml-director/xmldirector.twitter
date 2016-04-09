@@ -2,7 +2,7 @@
 fs.contrib.twitterfs
 ========
 
-A FS object that integrates with Dropbox.
+A FS object that integrates with Twitter.
 
 """
 
@@ -29,7 +29,7 @@ LOGGER = logging.getLogger(__name__)
 
 # Items in cache are considered expired after 5 minutes.
 CACHE_TTL = 300
-# The format Dropbox uses for times.
+# The format Twitter uses for times.
 TIME_FORMAT = '%a, %d %b %Y %H:%M:%S +0000'
 # Max size for spooling to memory before using disk (5M).
 MAX_BUFFER = 1024 ** 2 * 5
@@ -255,7 +255,7 @@ class CacheItem(object):
         self.timestamp = time.time()
 
 
-class DropboxCache(UserDict):
+class TwitterCache(UserDict):
     def set(self, path, metadata):
         self[path] = CacheItem(metadata)
         dname, bname = pathsplit(path)
@@ -272,14 +272,14 @@ class DropboxCache(UserDict):
         return value
 
 
-class DropboxClient(client.DropboxClient):
-    """A wrapper around the official DropboxClient. This wrapper performs
+class TwitterClient(client.TwitterClient):
+    """A wrapper around the official TwitterClient. This wrapper performs
     caching as well as converting errors to fs exceptions."""
     def __init__(self, *args, **kwargs):
-        super(DropboxClient, self).__init__(*args, **kwargs)
-        self.cache = DropboxCache()
+        super(TwitterClient, self).__init__(*args, **kwargs)
+        self.cache = TwitterCache()
 
-    # Below we split the DropboxClient metadata() method into two methods
+    # Below we split the TwitterClient metadata() method into two methods
     # metadata() and children(). This allows for more fine-grained fetches
     # and caching.
 
@@ -288,7 +288,7 @@ class DropboxClient(client.DropboxClient):
         item = self.cache.get(path) if cache_read else None
         if not item or item.metadata is None or item.expired:
             try:
-                metadata = super(DropboxClient, self).metadata(
+                metadata = super(TwitterClient, self).metadata(
                     path, include_deleted=False, list=False)
             except rest.ErrorResponse, e:
                 if e.status == 404:
@@ -320,7 +320,7 @@ class DropboxClient(client.DropboxClient):
             update = True
         if update:
             try:
-                metadata = super(DropboxClient, self).metadata(
+                metadata = super(TwitterClient, self).metadata(
                     path, hash=hash, include_deleted=False, list=True)
                 children = []
                 contents = metadata.pop('contents')
@@ -336,7 +336,7 @@ class DropboxClient(client.DropboxClient):
                     raise RemoteConnectionError(opname='metadata', path=path,
                                                 details=e)
                 # We have an item from cache (perhaps expired), but it's
-                # hash is still valid (as far as Dropbox is concerned),
+                # hash is still valid (as far as Twitter is concerned),
                 # so just renew it and keep using it.
                 item.renew()
         return item.children
@@ -344,7 +344,7 @@ class DropboxClient(client.DropboxClient):
     def file_create_folder(self, path):
         "Add newly created directory to cache."
         try:
-            metadata = super(DropboxClient, self).file_create_folder(path)
+            metadata = super(TwitterClient, self).file_create_folder(path)
         except rest.ErrorResponse, e:
             if e.status == 404:
                 raise ParentDirectoryMissingError(path)
@@ -357,7 +357,7 @@ class DropboxClient(client.DropboxClient):
 
     def file_copy(self, src, dst):
         try:
-            metadata = super(DropboxClient, self).file_copy(src, dst)
+            metadata = super(TwitterClient, self).file_copy(src, dst)
         except rest.ErrorResponse, e:
             if e.status == 404:
                 raise ResourceNotFoundError(src)
@@ -370,7 +370,7 @@ class DropboxClient(client.DropboxClient):
 
     def file_move(self, src, dst):
         try:
-            metadata = super(DropboxClient, self).file_move(src, dst)
+            metadata = super(TwitterClient, self).file_move(src, dst)
         except rest.ErrorResponse, e:
             if e.status == 404:
                 raise ResourceNotFoundError(src)
@@ -384,7 +384,7 @@ class DropboxClient(client.DropboxClient):
 
     def file_delete(self, path):
         try:
-            super(DropboxClient, self).file_delete(path)
+            super(TwitterClient, self).file_delete(path)
         except rest.ErrorResponse, e:
             if e.status == 404:
                 raise ResourceNotFoundError(path)
@@ -395,7 +395,7 @@ class DropboxClient(client.DropboxClient):
 
     def put_file(self, path, f, overwrite=False):
         try:
-            super(DropboxClient, self).put_file(path, f, overwrite=overwrite)
+            super(TwitterClient, self).put_file(path, f, overwrite=overwrite)
         except rest.ErrorResponse, e:
             LOGGER.error(e, exc_info=True, extra={'stack': True,})
             raise RemoteConnectionError(opname='put_file', path=path,
@@ -405,9 +405,9 @@ class DropboxClient(client.DropboxClient):
 
 def create_client(app_key, app_secret, access_type, token_key, token_secret):
     """Uses token from create_token() to gain access to the API."""
-    s = session.DropboxSession(app_key, app_secret, access_type)
+    s = session.TwitterSession(app_key, app_secret, access_type)
     s.set_token(token_key, token_secret)
-    return DropboxClient(s)
+    return TwitterClient(s)
 
 
 def metadata_to_info(metadata, localtime=False):
@@ -423,7 +423,7 @@ def metadata_to_info(metadata, localtime=False):
         else:
             mtime = metadata.get('modified')
         if mtime:
-            # Parse date/time from Dropbox as struct_time.
+            # Parse date/time from Twitter as struct_time.
             mtime = time.strptime(mtime, TIME_FORMAT)
             if localtime:
                 # Convert time to local timezone in seconds.
@@ -437,8 +437,8 @@ def metadata_to_info(metadata, localtime=False):
     return info
 
 
-class DropboxFS(FS):
-    """A FileSystem that stores data in Dropbox."""
+class TwitterFS(FS):
+    """A FileSystem that stores data in Twitter."""
 
     _meta = {'thread_safe': True,
              'virtual': False,
@@ -453,26 +453,26 @@ class DropboxFS(FS):
 
     def __init__(self, app_key, app_secret, access_type, token_key,
                  token_secret, localtime=False, thread_synchronize=True, root_path='/'):
-        """Create an fs that interacts with Dropbox.
+        """Create an fs that interacts with Twitter.
 
-        :param app_key: Your app key assigned by Dropbox.
-        :param app_secret: Your app secret assigned by Dropbox.
+        :param app_key: Your app key assigned by Twitter.
+        :param app_secret: Your app secret assigned by Twitter.
         :param access_type: Type of access requested, 'twitter' or 'app_folder'.
         :param token_key: The oAuth key you received after authorization.
         :param token_secret: The oAuth secret you received after authorization.
         :param thread_synchronize: set to True (default) to enable thread-safety
         """
-        super(DropboxFS, self).__init__(thread_synchronize=thread_synchronize)
+        super(TwitterFS, self).__init__(thread_synchronize=thread_synchronize)
         self.client = create_client(app_key, app_secret, access_type,
                                     token_key, token_secret)
         self.localtime = localtime
         self.root_path = unicode(root_path, 'utf8')
 
     def __str__(self):
-        return "<DropboxFS: >"
+        return "<TwitterFS: >"
 
     def __unicode__(self):
-        return u"<DropboxFS: >"
+        return u"<TwitterFS: >"
 
     def _get_path(self, path):
         if not isinstance(path, unicode):
@@ -486,7 +486,7 @@ class DropboxFS(FS):
     def getmeta(self, meta_name, default=NoDefaultMeta):
         if meta_name == 'read_only':
             return self.read_only
-        return super(DropboxFS, self).getmeta(meta_name, default)
+        return super(TwitterFS, self).getmeta(meta_name, default)
 
     @synchronize
     def open(self, path, mode="rb", **kwargs):
@@ -503,10 +503,10 @@ class DropboxFS(FS):
         self.client.put_file(self._get_path(path), data, overwrite=True)
 
     def desc(self, path):
-        return "%s in Dropbox" % self._get_path(path)
+        return "%s in Twitter" % self._get_path(path)
 
     def getsyspath(self, path, allow_none=False):
-        "Returns a path as the Dropbox API specifies."
+        "Returns a path as the Twitter API specifies."
         if allow_none:
             return None
         return client.format_path(self._get_path(path))
@@ -681,21 +681,21 @@ interval = setInterval(function() {
 
 def main():
     parser = optparse.OptionParser(prog="twitterfs",
-                                   description="CLI harness for DropboxFS.")
+                                   description="CLI harness for TwitterFS.")
     parser.add_option(
         "-k",
         "--app-key",
-        help="Your Dropbox app key.")
+        help="Your Twitter app key.")
     parser.add_option(
         "-s",
         "--app-secret",
-        help="Your Dropbox app secret.")
+        help="Your Twitter app secret.")
     parser.add_option(
         "-t",
         "--type",
         default='twitter',
         choices=('twitter', 'app_folder'),
-        help="Your Dropbox app access type.")
+        help="Your Twitter app access type.")
     parser.add_option(
         "-a",
         "--token-key",
@@ -707,21 +707,21 @@ def main():
     parser.add_option(
         "-l",
         "--user-login",
-        help="Your Dropbox login.")
+        help="Your Twitter login.")
     parser.add_option(
         "-p",
         "--user-password",
-        help="Your Dropbox password.")
+        help="Your Twitter password.")
 
     (options, args) = parser.parse_args()
 
     # Can't operate without these parameters.
     if not options.app_key or not options.app_secret:
-        parser.error('You must obtain an app key and secret from Dropbox at the following URL.\n\nhttps://www.twitter.com/developers/apps')
+        parser.error('You must obtain an app key and secret from Twitter at the following URL.\n\nhttps://www.twitter.com/developers/apps')
 
     # Instantiate a client one way or another.
     if not options.token_key and not options.token_secret:
-        s = session.DropboxSession(options.app_key, options.app_secret,
+        s = session.TwitterSession(options.app_key, options.app_secret,
                                    options.type)
         # Get a temporary token, so we can make oAuth calls.
         t = s.obtain_request_token()
@@ -752,7 +752,7 @@ def main():
     else:
         token_key, token_secret = options.token_key, options.token_secret
 
-    fs = DropboxFS(options.app_key, options.app_secret, options.type,
+    fs = TwitterFS(options.app_key, options.app_secret, options.type,
                    token_key, token_secret, root_path='/Foo')
 
     print fs.getinfo('/ajung')

@@ -11,20 +11,20 @@
     <metal:content-core define-macro="content-core"
            tal:define="token view/get_oauth_token">
 
-        <h2 i18n:translate="">Dropbox Authentication/Authorization</h2>
+        <h2 i18n:translate="">Twitter Authentication/Authorization</h2>
         <div tal:condition="not: token" i18n:translate="" class="info">
-            Your application is not authorized for Dropbox access.
+            Your application is not authorized for Twitter access.
         </div>
         <a tal:condition="not: token" 
             tal:attributes="href view/get_oauth_url" 
-            i18n:translate="">Authorize Dropbox access</a>
+            i18n:translate="">Authorize Twitter access</a>
 
         <div tal:condition="token" i18n:translate="" class="info">
-            Your application is authorized for Dropbox access.
+            Your application is authorized for Twitter access.
         </div>
         <a tal:condition="token" 
             tal:attributes="href string:${context/absolute_url}/deauthorize-twitter" 
-            i18n:translate="">Deauthorize Dropbox access</a>
+            i18n:translate="">Deauthorize Twitter access</a>
 
   </metal:content-core>
 </metal:main>

@@ -15,15 +15,15 @@ class IBrowserLayer(Interface):
     """A brower layer specific to my product """
 
 
-class IDropboxSettings(Interface):
-    """ Dropbox settings """
+class ITwitterSettings(Interface):
+    """ Twitter settings """
 
     twitter_app_key = schema.TextLine(
-        title=_(u'Dropbox application key'),
+        title=_(u'Twitter application key'),
         required=True
     )
 
     twitter_app_secret = schema.TextLine(
-        title=_(u'Dropbox application secret'),
+        title=_(u'Twitter application secret'),
         required=True
     )

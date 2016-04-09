@@ -5,7 +5,7 @@ Integration of
 
 - Plone (https://www.plone.org)
 - XML Director (https://www.xml-director.info) 
-- Dropbox
+- Twitter
 
 Requirements
 ------------
@@ -20,16 +20,16 @@ Requirements
 Usage
 -----
 
-First you need to register your own App as Dropbox developer
+First you need to register your own App as Twitter developer
 on https://twitter.com/developer. Your application must be configured
 for full twitter access. The application key and application secret
 must be configured globally inside your Plone site setup -> XML Director
-Dropbox setting.
+Twitter setting.
 
-A ``Connector`` instance must be authorized with Dropbox (see ``Dropbox``
+A ``Connector`` instance must be authorized with Twitter (see ``Twitter``
 tab/action).
 
-The connection URL for a ``Connector`` connected to Dropbox must be
+The connection URL for a ``Connector`` connected to Twitter must be
 ``twitter://twitter.com/``.
 
 

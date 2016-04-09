@@ -11,7 +11,7 @@
     <browser:page
         name="xmldirector-twitter-settings"
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        class=".controlpanel.DropboxSettingsControlPanel"
+        class=".controlpanel.TwitterSettingsControlPanel"
         permission="cmf.ManagePortal"
     />
 
@@ -19,7 +19,7 @@
         name="authorize-twitter"
         for="xmldirector.plonecore.connector.IConnector"
         permission="cmf.ModifyPortalContent"
-        class=".twitter_authentication.DropboxAuthentication"
+        class=".twitter_authentication.TwitterAuthentication"
         template="twitter_authentication.pt"
         />
 
@@ -27,7 +27,7 @@
         name="deauthorize-twitter"
         for="xmldirector.plonecore.connector.IConnector"
         permission="cmf.ModifyPortalContent"
-        class=".twitter_authentication.DropboxAuthentication"
+        class=".twitter_authentication.TwitterAuthentication"
         attribute="deauthorize"
         />                                              i
 
@@ -35,7 +35,7 @@
         name="authorize-twitter-action"
         for="xmldirector.plonecore.connector.IConnector"
         permission="cmf.ModifyPortalContent"
-        class=".twitter_authentication.DropboxAuthentication"
+        class=".twitter_authentication.TwitterAuthentication"
         attribute="authorize"
         />                                              i
 

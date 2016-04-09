@@ -13,7 +13,7 @@ from Products.Five.browser import BrowserView
 from plone.registry.interfaces import IRegistry
 from zope.annotation import IAnnotations
 
-from xmldirector.twitter.interfaces import IDropboxSettings
+from xmldirector.twitter.interfaces import ITwitterSettings
 
 
 DROPBOX_TOKEN_KEY = 'xmldirector.twitter.token_key'
@@ -21,7 +21,7 @@ DROPBOX_TOKEN_SECRET = 'xmldirector.twitter.token_secret'
 DROPBOX_TEMP_TOKEN = 'xmldirector.twitter.oauth_temporary_token'
 
 
-class DropboxAuthentication(BrowserView):
+class TwitterAuthentication(BrowserView):
 
     def authorize(self, oauth_token):
         
@@ -32,7 +32,7 @@ class DropboxAuthentication(BrowserView):
         annotation[DROPBOX_TOKEN_KEY] = a.key
         annotation[DROPBOX_TOKEN_SECRET] = a.secret
 
-        self.context.plone_utils.addPortalMessage(u'Dropbox access authorized')
+        self.context.plone_utils.addPortalMessage(u'Twitter access authorized')
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
 
     def deauthorize(self):
@@ -47,18 +47,18 @@ class DropboxAuthentication(BrowserView):
         except KeyError:
             pass
 
-        self.context.plone_utils.addPortalMessage(u'Dropbox access deauthorized')
+        self.context.plone_utils.addPortalMessage(u'Twitter access deauthorized')
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
 
     @property
     def twitter_settings(self):
         registry = getUtility(IRegistry)
-        return registry.forInterface(IDropboxSettings)
+        return registry.forInterface(ITwitterSettings)
 
     @property
     def twitter_session(self):
         settings = self.twitter_settings
-        return session.DropboxSession(
+        return session.TwitterSession(
                 settings.twitter_app_key, 
                 settings.twitter_app_secret, 
                 'twitter')

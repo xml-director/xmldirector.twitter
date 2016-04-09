@@ -18,7 +18,7 @@
         name="default"
         title="xmldirector.twitter"
         directory="profiles/default"
-        description="XML Director integration with Dropbox"
+        description="XML Director integration with Twitter"
         provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
