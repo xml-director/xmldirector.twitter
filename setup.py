@@ -29,8 +29,7 @@ setup(name='xmldirector.twitter',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'fs',
-          'twitter'
+          'Twython'
       ],
       tests_require=['zope.testing'],
       entry_points="""
