@@ -6,6 +6,7 @@
 ################################################################
 
 from twython import Twython
+from twython import TwythonAuthError
 
 from zope.component import getUtility
 from Products.Five.browser import BrowserView
@@ -52,6 +53,13 @@ class TwitterAuthentication(BrowserView):
 
         self.context.plone_utils.addPortalMessage(u'Twitter access deauthorized')
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
+
+    def twitter_info(self):
+        session = self.twitter_session
+        try:
+            return session.verify_credentials()
+        except TwythonAuthError:
+            return None
 
     @property
     def twitter_settings(self):
