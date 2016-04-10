@@ -1,10 +1,9 @@
 xmldirector.twitter
-================
+===================
 
-Integration of XML-Director with C-Rex.
+Integration of XML-Director with Twitter
 
 - www.xml-director.info
-- www.c-rex.net
 
 
 Documentation

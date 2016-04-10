@@ -4,7 +4,6 @@ xmldirector.twitter
 Integration of 
 
 - Plone (https://www.plone.org)
-- XML Director (https://www.xml-director.info) 
 - Twitter
 
 Requirements
@@ -20,8 +19,8 @@ Requirements
 Usage
 -----
 
-First you need to register your own App as Twitter developer
-on https://twitter.com/developer. Your application must be configured
+First you need to register your own App as Twitter developer.
+on https://apps.twitter.com/. Your application must be configured
 for full twitter access. The application key and application secret
 must be configured globally inside your Plone site setup -> XML Director
 Twitter setting.
@@ -43,7 +42,7 @@ See https://github.com/xml-director/xmldirector.twitter
 
 Bugtracker
 ----------
-See https://github.com/xml-director/xmldirector.twitter
+See https://github.com/xml-director/xmldirector.twitter/issues
 
 
 Author
