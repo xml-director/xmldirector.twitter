@@ -9,7 +9,7 @@
 
 <metal:main fill-slot="content-core">
     <metal:content-core define-macro="content-core"
-           tal:define="token view/get_oauth_token">
+        tal:define="token view/get_oauth_token">
 
         <h2 i18n:translate="">Twitter Authentication/Authorization</h2>
         <div tal:condition="not: token" i18n:translate="" class="info">
@@ -25,7 +25,7 @@
         <a tal:condition="token" 
             tal:attributes="href string:${context/absolute_url}/deauthorize-twitter" 
             i18n:translate="">Deauthorize Twitter access</a>
-
+        
   </metal:content-core>
 </metal:main>
 
