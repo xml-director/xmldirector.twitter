@@ -5,7 +5,7 @@ version = '0.1.0'
 
 setup(name='xmldirector.twitter',
       version=version,
-      description="Plone/XML-Director integration with c-rex.net",
+      description="Plone/XML-Director integration withTwitter",
       long_description=open(os.path.join("docs", "source", "README.rst")).read() + "\n" +
       open(os.path.join("docs", "source", "HISTORY.rst")).read(),
       # Get more strings from
