@@ -6,6 +6,7 @@
 ################################################################
 
 from twython import Twython
+from twython import TwythonError
 from twython import TwythonAuthError
 
 from zope.component import getUtility
@@ -14,6 +15,7 @@ from plone.registry.interfaces import IRegistry
 from zope.annotation import IAnnotations
 
 from xmldirector.twitter.interfaces import ITwitterSettings
+from xmldirector.twitter.i18n import MessageFactory as _
 
 TWITTER_TOKEN = 'xmldirector.twitter.token'
 TWITTER_TOKEN_SECRET = 'xmldirector.twitter.token_secret'
@@ -36,7 +38,7 @@ class TwitterAuthentication(BrowserView):
         annotation[TWITTER_TOKEN] = final_step['oauth_token']
         annotation[TWITTER_TOKEN_SECRET] = final_step['oauth_token_secret']
 
-        self.context.plone_utils.addPortalMessage(u'Twitter access authorized')
+        self.context.plone_utils.addPortalMessage(_(u'Twitter access authorized'))
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
 
     def deauthorize(self):
@@ -51,12 +53,12 @@ class TwitterAuthentication(BrowserView):
         except KeyError:
             pass
 
-        self.context.plone_utils.addPortalMessage(u'Twitter access deauthorized')
+        self.context.plone_utils.addPortalMessage(_(u'Twitter access deauthorized'))
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
 
     def twitter_info(self):
         session = self.twitter_session
-        try:
+        try:                                        
             return session.verify_credentials()
         except TwythonAuthError:
             return None
@@ -92,4 +94,15 @@ class TwitterAuthentication(BrowserView):
         annotation[TWITTER_TOKEN] = oauth_token
         annotation[TWITTER_TOKEN_SECRET] = oauth_token_secret
         return auth['auth_url']
+
+    def post_to_twitter(self, text):
+
+        twitter = self.twitter_session
+        try:
+            twitter.update_status(status=text)
+            self.context.plone_utils.addPortalMessage(_(u'Post to Twitter successful'))
+            self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
+        except TwythonError as e:
+            self.context.plone_utils.addPortalMessage(_(u'Post to Twitter failed - ' + str(e)), 'error')
+            self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter?text={}'.format(text))
 

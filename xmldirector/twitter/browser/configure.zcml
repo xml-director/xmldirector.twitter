@@ -39,4 +39,12 @@
         attribute="authorize"
         />                                              i
 
+    <browser:page
+        name="twitter-post"
+        for="xmldirector.plonecore.connector.IConnector"
+        permission="cmf.ModifyPortalContent"
+        class=".twitter_authentication.TwitterAuthentication"
+        attribute="post_to_twitter"
+        />                                              i
+
 </configure>
