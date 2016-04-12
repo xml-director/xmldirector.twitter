@@ -33,49 +33,51 @@
             tal:attributes="href string:${context/absolute_url}/deauthorize-twitter" 
             i18n:translate="">Deauthorize Twitter access</a>
 
-        <div id="twitter-info" tal:define="info view/twitter_info" style="margin-top: 1em">
-            <h2 i18n:translate="">Twitter account information</h2>
-            <tal:if condition="info">
-                <div>
-                    <span class="label" i18n:translate="">Screen name</span>:
-                    <span tal:content="info/screen_name" />
-                </div>
-                <div>
-                    <span class="label" i18n:translate="">Name</span>:
-                    <span tal:content="info/name" />
-                </div>
-                <div>
-                    <span class="label" i18n:translate="">Description</span>:
-                    <span tal:content="info/description" />
-                </div>
-                <div>
-                    <span class="label" i18n:translate="">URL</span>:
-                    <a tal:attributes="href info/url" tal:content="info/url" />
-                </div>
-                <div>
-                    <span class="label" i18n:translate=""># followers</span>:
-                    <span tal:content="info/followers_count" />
-                </div>
-                <div>
-                    <span class="label" i18n:translate=""># favorites</span>:
-                    <span tal:content="info/favourites_count" />
-                </div>
-                <div>
-                    <span class="label" i18n:translate="">Time zone</span>:
-                    <span tal:content="info/time_zone" />
-                </div>
-                <img tal:attributes="src info/profile_image_url_https"/>
+        <tal:def tal:define="info view/twitter_info">
+            <div id="twitter-info" tal:condition="token" style="margin-top: 1em">
+                <h2 i18n:translate="">Twitter account information</h2>
+                <tal:if condition="info">
+                    <div>
+                        <span class="label" i18n:translate="">Screen name</span>:
+                        <span tal:content="info/screen_name" />
+                    </div>
+                    <div>
+                        <span class="label" i18n:translate="">Name</span>:
+                        <span tal:content="info/name" />
+                    </div>
+                    <div>
+                        <span class="label" i18n:translate="">Description</span>:
+                        <span tal:content="info/description" />
+                    </div>
+                    <div>
+                        <span class="label" i18n:translate="">URL</span>:
+                        <a tal:attributes="href info/url" tal:content="info/url" />
+                    </div>
+                    <div>
+                        <span class="label" i18n:translate=""># followers</span>:
+                        <span tal:content="info/followers_count" />
+                    </div>
+                    <div>
+                        <span class="label" i18n:translate=""># favorites</span>:
+                        <span tal:content="info/favourites_count" />
+                    </div>
+                    <div>
+                        <span class="label" i18n:translate="">Time zone</span>:
+                        <span tal:content="info/time_zone" />
+                    </div>
+                    <img tal:attributes="src info/profile_image_url_https"/>
 
-                <form method="post" tal:attributes="action string:${context/absolute_url}/twitter-post" style="margin-top: 1em">
-                    <textarea 
-                        name="text" 
-                        rows="3" 
-                        cols="60" 
-                        tal:content="request/form/text | string:${context/Title} - ${context/absolute_url}"></textarea>
-                    <input type="submit" i18n:attributes="value" value="Post to Twitter"/>
-                </form>
-            </tal:if>
-        </div>
+                    <form method="post" tal:attributes="action string:${context/absolute_url}/twitter-post" style="margin-top: 1em">
+                        <textarea 
+                            name="text" 
+                            rows="3" 
+                            cols="60" 
+                            tal:content="request/form/text | string:${context/Title} - ${context/absolute_url}"></textarea>
+                        <input type="submit" i18n:attributes="value" value="Post to Twitter"/>
+                    </form>
+                </tal:if>
+            </div>
+        </tal:def>
             
   </metal:content-core>
 </metal:main>

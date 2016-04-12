@@ -5,6 +5,9 @@
 # (C) 2016,  Andreas Jung, www.zopyx.com, Tuebingen, Germany
 ################################################################
 
+
+import datetime 
+
 from twython import Twython
 from twython import TwythonError
 from twython import TwythonAuthError
@@ -17,14 +20,17 @@ from zope.annotation import IAnnotations
 from xmldirector.twitter.interfaces import ITwitterSettings
 from xmldirector.twitter.i18n import MessageFactory as _
 
+
 TWITTER_TOKEN = 'xmldirector.twitter.token'
 TWITTER_TOKEN_SECRET = 'xmldirector.twitter.token_secret'
+TWITTER_DATA = 'xmldirector.twitter.data'
+TWITTER_DATA_LAST_UPDATED = 'xmldirector.twitter.last_updated'
 
 
 class TwitterAuthentication(BrowserView):
 
     def authorize(self, oauth_token):
-        
+
         annotation = IAnnotations(self.context)
         settings = self.twitter_settings
 
@@ -37,31 +43,38 @@ class TwitterAuthentication(BrowserView):
         final_step = twitter.get_authorized_tokens(oauth_verifier)
         annotation[TWITTER_TOKEN] = final_step['oauth_token']
         annotation[TWITTER_TOKEN_SECRET] = final_step['oauth_token_secret']
-
         self.context.plone_utils.addPortalMessage(_(u'Twitter access authorized'))
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
 
     def deauthorize(self):
+        """ Deauthorize Twitter access """
         annotation = IAnnotations(self.context)
-        try:
-            del annotation[TWITTER_TOKEN]
-        except KeyError:
-            pass
-
-        try:
-            del annotation[TWITTER_TOKEN_SECRET]
-        except KeyError:
-            pass
-
+        for key in (TWITTER_TOKEN, TWITTER_TOKEN_SECRET, TWITTER_DATA, TWITTER_DATA_LAST_UPDATED):
+            try:
+                del annotation[key]
+            except KeyError:
+                pass
         self.context.plone_utils.addPortalMessage(_(u'Twitter access deauthorized'))
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
 
-    def twitter_info(self):
+    def twitter_info(self, force=True):
+        """ Return Twitter information associated with the current token """
+        annotation = IAnnotations(self.context)
+        data = annotation.get(TWITTER_DATA)
+        if data and not force:
+            last_accessed = annotation[TWITTER_DATA_LAST_UPDATED]
+            if (datetime.datetime.utcnow() - last_accessed).seconds < 15 * 60: # 15 minutes
+                return data
+
         session = self.twitter_session
-        try:                                        
-            return session.verify_credentials()
+        try:
+            data = session.verify_credentials()
         except TwythonAuthError:
-            return None
+            data = None
+
+        annotation[TWITTER_DATA] = data
+        annotation[TWITTER_DATA_LAST_UPDATED] = datetime.datetime.utcnow()
+        return data
 
     @property
     def twitter_settings(self):
