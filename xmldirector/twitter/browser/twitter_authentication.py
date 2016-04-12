@@ -57,8 +57,9 @@ class TwitterAuthentication(BrowserView):
         self.context.plone_utils.addPortalMessage(_(u'Twitter access deauthorized'))
         self.request.response.redirect(self.context.absolute_url() + '/authorize-twitter')
 
-    def twitter_info(self, force=True):
+    def twitter_info(self, force=False):
         """ Return Twitter information associated with the current token """
+
         annotation = IAnnotations(self.context)
         data = annotation.get(TWITTER_DATA)
         if data and not force:
