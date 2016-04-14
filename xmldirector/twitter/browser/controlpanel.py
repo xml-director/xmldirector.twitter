@@ -15,7 +15,7 @@ from xmldirector.twitter.i18n import MessageFactory as _
 class TwitterSettingsEditForm(controlpanel.RegistryEditForm):
 
     schema = ITwitterSettings
-    label = _(u'Twitter Policy settings')
+    label = _(u'XML Director - Twitter settings')
     description = _(u'')
 
     def updateFields(self):
