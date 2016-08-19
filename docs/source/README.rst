@@ -11,9 +11,9 @@ Requirements
 
 - Plone 4.3 (tested)
   
-- Plone 5.0 (experimental, in progress)
+- Plone 5.0 (tested)
 
-- XML Director (xmldirector.plonecore)
+- XML Director 2.0 (xmldirector.plonecore)
 
 
 Usage
