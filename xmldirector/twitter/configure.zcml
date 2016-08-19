@@ -16,7 +16,7 @@
 
     <genericsetup:registerProfile
         name="default"
-        title="xmldirector.twitter"
+        title="XML Director integration with Twitter"
         directory="profiles/default"
         description="XML Director integration with Twitter"
         provides="Products.GenericSetup.interfaces.EXTENSION"
